@@ -18,7 +18,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
-            android:text="https://user@example.com"
+            android:text="https://clnhlzmn@5apps.com"
             android:ems="10"
             android:id="@+id/editTextInput"
             app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="16dp"

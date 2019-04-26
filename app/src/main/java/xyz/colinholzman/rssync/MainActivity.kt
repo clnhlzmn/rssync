@@ -10,6 +10,24 @@ import okhttp3.*
 import java.io.IOException
 import java.net.URL
 import java.net.URLConnection
+import android.content.Intent
+import com.google.gson.Gson
+
+class Link {
+    val rel: String? = null
+    val type: String? = null
+    val href: String? = null
+    val titles: Map<String, Any>? = null
+    val properties: Map<String, Any?>? = null
+}
+
+class JRD {
+    val expires: String? = null
+    val subject: String? = null
+    val aliases: Array<String>? = null
+    val properties: Map<String, Any?>? = null
+    val links: Array<Link>? = null
+}
 
 fun getUri(input: String): Uri {
     return Uri.parse(input)
@@ -18,6 +36,7 @@ fun getUri(input: String): Uri {
 class MainActivity : AppCompatActivity() {
 
     companion object {
+        var gson = Gson()
         val client = OkHttpClient()
     }
 
@@ -52,6 +71,12 @@ class MainActivity : AppCompatActivity() {
                         runOnUiThread {
                             if (response.code() == 200) {
                                 resultText.text = response.body()?.string()
+
+                                val result = gson.fromJson(resultText.text.toString(), JRD().javaClass)
+
+//                                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse())
+//                                startActivity(browserIntent)
+
                             } else {
                                 resultText.text = "failure: ${response.code()}"
                             }
