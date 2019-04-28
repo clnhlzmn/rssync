@@ -8,15 +8,11 @@ import android.widget.EditText
 import android.widget.TextView
 import okhttp3.*
 import java.io.IOException
-import java.net.URL
-import java.net.URLConnection
 import android.content.Intent
 import android.util.Log
 import android.webkit.URLUtil
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
-import java.lang.RuntimeException
-import java.lang.reflect.Type
 
 class Link {
     val rel: String = "rel"
@@ -59,14 +55,14 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener {
             val inputUri = getUri(inputText.text.toString())
 
-            val query = Uri.Builder()
-            query.scheme("https")
+            val webfingerQuery = Uri.Builder()
+            webfingerQuery.scheme("https")
                 .authority(inputUri.host)
                 .appendPath(".well-known")
                 .appendPath("webfinger")
                 .appendQueryParameter("resource", "acct:${inputUri.authority}")
 
-            val request = Request.Builder().method("GET", null).url(query.toString()).build()
+            val request = Request.Builder().method("GET", null).url(webfingerQuery.toString()).build()
 
             client.newCall(request).enqueue(
                 object: Callback {
@@ -84,10 +80,23 @@ class MainActivity : AppCompatActivity() {
                                 val result = gson.fromJson<JRD>(resultText.text.toString(), object: TypeToken<JRD>(){}.type)
 
                                 val href = result.links?.get(0)?.href
-                                val authUrl = result.links?.get(0)?.properties?.get("http://tools.ietf.org/html/rfc6749#section-4.2")
+                                val authUrlString = result.links?.get(0)?.properties?.get("http://tools.ietf.org/html/rfc6749#section-4.2")
                                 val version = result.links?.get(0)?.properties?.get("http://remotestorage.io/spec/version")
 
-                                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(authUrl))
+                                val authUri = Uri.parse(authUrlString)
+                                val authQuery =
+                                    Uri.Builder()
+                                        .scheme(authUri.scheme)
+                                        .authority(authUri.authority)
+                                        .path(authUri.path)
+                                        .fragment(authUri.fragment)
+                                        .appendQueryParameter("client_id", "colinholzman.xyz")
+                                        .appendQueryParameter("response_type", "token")
+                                        .appendQueryParameter("redirect_uri", "https://example.com")
+                                        .appendQueryParameter("scope", "*:rw")
+                                        .build()
+
+                                val browserIntent = Intent(Intent.ACTION_VIEW, authQuery)
                                 startActivity(browserIntent)
 
                                 Log.i("result", result.toString())
