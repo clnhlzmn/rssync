@@ -10,8 +10,9 @@ import java.io.IOException
 class Discovery {
 
     companion object {
-        var gson = Gson()
-        val client = OkHttpClient()
+
+        private val gson = Gson()
+        private val client = OkHttpClient()
 
         fun lookup(userAddress: String, onFailure: (String) -> Unit, onSuccess: (JSONResourceDescriptor) -> Unit) {
             val userAddressUri = Uri.parse(URLUtil.guessUrl(userAddress))

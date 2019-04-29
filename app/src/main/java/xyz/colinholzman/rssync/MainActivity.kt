@@ -1,5 +1,7 @@
 package xyz.colinholzman.rssync
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -40,7 +42,9 @@ class MainActivity : AppCompatActivity(),
 
     override fun onAuthorization(token: String) {
         Log.i(id, token)
-        //TODO: save token
+        val prefs = getPreferences(Context.MODE_PRIVATE).edit()
+        prefs.putString("token", token)
+        prefs.apply()
         val connectedFragment = ConnectedFragment.newInstance(token)
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame, connectedFragment)

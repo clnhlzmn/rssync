@@ -1,13 +1,11 @@
 package xyz.colinholzman.rssync
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.URLUtil
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -27,6 +25,24 @@ class AuthorizeFragment : Fragment() {
         companion object {
             // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
             const val ARG_PARAM1 = "param1"
+        }
+    }
+
+    //class to intercept the redirect url and get access token when we authorize
+    private class AuthTokenWebViewClient(
+        val redirectAuthority: String?,
+        val listener: OnAuthorizationListener?
+    ): WebViewClient() {
+        override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+            if (request.url.authority == redirectAuthority) {
+                val token = request.url.fragment?.removePrefix("access_token=")
+                if (token != null && token != request.url.fragment) {
+                    listener?.onAuthorization(token)
+                    return true
+                }
+            }
+            view.loadUrl(request.url.toString())
+            return false
         }
     }
 
@@ -60,19 +76,8 @@ class AuthorizeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val webView = view.findViewById<WebView>(R.id.authorize_web_view)
-        webView?.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                if (request.url.authority == Authorization.redirectUrl.authority?.toString()) {
-                    val token = request.url.fragment?.removePrefix("access_token=")
-                    if (token != null && token != request.url.fragment) {
-                        listener?.onAuthorization(token)
-                        return true
-                    }
-                }
-                view.loadUrl(request.url.toString())
-                return false
-            }
-        }
+        webView?.webViewClient =
+            AuthTokenWebViewClient(Authorization.redirectUrl.authority?.toString(), listener)
         webView?.loadUrl(authUrl)
     }
 
