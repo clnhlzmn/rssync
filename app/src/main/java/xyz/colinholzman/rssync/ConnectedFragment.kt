@@ -12,7 +12,7 @@ import android.widget.Button
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [ConnectedFragment.OnFragmentInteractionListener] interface
+ * [ConnectedFragment.OnConnectedInteractionListener] interface
  * to handle interaction events.
  * Use the [ConnectedFragment.newInstance] factory method to
  * create an instance of this fragment.
@@ -20,13 +20,11 @@ import android.widget.Button
  */
 class ConnectedFragment : Fragment() {
 
-    // TODO: Rename and change types of parameters
     private var token: String? = null
-    private var listener: OnFragmentInteractionListener? = null
+    private var listener: OnConnectedInteractionListener? = null
 
     private class Constants {
         companion object {
-            // TODO: Rename parameter arguments, choose names that match
             // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
             const val ARG_PARAM1 = "param1"
         }
@@ -49,10 +47,10 @@ class ConnectedFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
+        if (context is OnConnectedInteractionListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException(context.toString() + " must implement OnConnectedInteractionListener")
         }
     }
 
@@ -80,8 +78,7 @@ class ConnectedFragment : Fragment() {
      * (http://developer.android.com/training/basics/fragments/communicating.html)
      * for more information.
      */
-    interface OnFragmentInteractionListener {
-        fun onFragmentInteraction(uri: Uri)
+    interface OnConnectedInteractionListener {
     }
 
     companion object {
@@ -92,7 +89,6 @@ class ConnectedFragment : Fragment() {
          * @param token Parameter 1.
          * @return A new instance of fragment ConnectedFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(token: String) =
             ConnectedFragment().apply {

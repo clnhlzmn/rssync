@@ -13,7 +13,7 @@ class Discovery {
         var gson = Gson()
         val client = OkHttpClient()
 
-        fun lookup(userAddress: String, onFailure: (IOException) -> Unit, onSuccess: (JSONResourceDescriptor) -> Unit) {
+        fun lookup(userAddress: String, onFailure: (String) -> Unit, onSuccess: (JSONResourceDescriptor) -> Unit) {
             val userAddressUri = Uri.parse(URLUtil.guessUrl(userAddress))
             val webfingerQueryUri = Uri.Builder()
             webfingerQueryUri.scheme("https")
@@ -28,7 +28,7 @@ class Discovery {
             client.newCall(webfingerQueryRequest).enqueue(
                 object: Callback {
                     override fun onFailure(call: Call, e: IOException) {
-                        onFailure(e)
+                        onFailure(e.toString())
                     }
                     override fun onResponse(call: Call, response: Response) {
                         if (response.code() == 200) {
@@ -39,7 +39,7 @@ class Discovery {
                                 )
                             onSuccess(result)
                         } else {
-                            onFailure(IOException(response.code().toString()))
+                            onFailure(response.code().toString())
                         }
                     }
                 }

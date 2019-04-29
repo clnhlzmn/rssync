@@ -30,7 +30,6 @@ class AuthorizeFragment : Fragment() {
         }
     }
 
-    // TODO: Rename and change types of parameters
     private var authUrl: String? = null
     private var listener: OnAuthorizationListener? = null
 
@@ -54,7 +53,7 @@ class AuthorizeFragment : Fragment() {
         if (context is OnAuthorizationListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException(context.toString() + " must implement OnConnectedInteractionListener")
         }
     }
 
@@ -105,7 +104,6 @@ class AuthorizeFragment : Fragment() {
          * @param authUrl Parameter 1.
          * @return A new instance of fragment AuthorizeFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(authUrl: String) =
             AuthorizeFragment().apply {

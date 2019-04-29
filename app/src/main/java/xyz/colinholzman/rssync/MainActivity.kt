@@ -6,15 +6,11 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.util.Log
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import com.google.gson.*
-import com.google.gson.reflect.TypeToken
-import android.webkit.WebViewClient
 
 
-
-class MainActivity : AppCompatActivity(), AuthorizeFragment.OnAuthorizationListener {
+class MainActivity : AppCompatActivity(),
+    AuthorizeFragment.OnAuthorizationListener,
+    ConnectedFragment.OnConnectedInteractionListener {
 
     companion object {
         val id = "MainActivity"
@@ -27,15 +23,15 @@ class MainActivity : AppCompatActivity(), AuthorizeFragment.OnAuthorizationListe
         val inputText = findViewById<EditText>(R.id.editTextInput)
         val connectButton = findViewById<Button>(R.id.buttonLookup)
 
+        //TODO: determine connection status and set fragment accordingly
         connectButton.setOnClickListener {
             Discovery.lookup(
                 inputText.text.toString(),
-                { e -> Log.e(id, e.toString()) },
+                { e -> Log.e(id, e) },
                 { jrd ->
                     val authFragment = AuthorizeFragment.newInstance(Authorization.getAuthQuery(jrd).toString())
                     val transaction = supportFragmentManager.beginTransaction()
                     transaction.replace(R.id.frame, authFragment)
-                    transaction.addToBackStack(null)
                     transaction.commit()
                 }
             )
@@ -44,6 +40,12 @@ class MainActivity : AppCompatActivity(), AuthorizeFragment.OnAuthorizationListe
 
     override fun onAuthorization(token: String) {
         Log.i(id, token)
+        //TODO: save token
+        val connectedFragment = ConnectedFragment.newInstance(token)
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.frame, connectedFragment)
+        transaction.commit()
+        //TODO: change connect to disconnect
     }
 
 }
