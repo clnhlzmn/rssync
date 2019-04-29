@@ -10,9 +10,12 @@ class Authorization {
         val redirectUrl = Uri.parse(URLUtil.guessUrl("https://rssync.colinholzman.xyz"))
         val scope = "clipboard:rw"
 
+        fun getHref(jrd: JSONResourceDescriptor): Uri {
+            return Uri.parse(jrd.links!![0].href)
+        }
+
         fun getAuthQuery(jrd: JSONResourceDescriptor): Uri {
 
-            val href = jrd.links?.get(0)?.href
             val authUrlString = jrd.links?.get(0)?.properties?.get("http://tools.ietf.org/html/rfc6749#section-4.2")
             val version = jrd.links?.get(0)?.properties?.get("http://remotestorage.io/spec/version")
 

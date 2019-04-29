@@ -12,7 +12,6 @@ class Discovery {
     companion object {
 
         private val gson = Gson()
-        private val client = OkHttpClient()
 
         fun lookup(userAddress: String, onFailure: (String) -> Unit, onSuccess: (JSONResourceDescriptor) -> Unit) {
             val userAddressUri = Uri.parse(URLUtil.guessUrl(userAddress))
@@ -26,7 +25,7 @@ class Discovery {
                 .method("GET", null)
                 .url(webfingerQueryUri.toString())
                 .build()
-            client.newCall(webfingerQueryRequest).enqueue(
+            Http.client.newCall(webfingerQueryRequest).enqueue(
                 object: Callback {
                     override fun onFailure(call: Call, e: IOException) {
                         onFailure(e.toString())

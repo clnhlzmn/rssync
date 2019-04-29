@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,8 @@ class ConnectedFragment : Fragment() {
 
     private var token: String? = null
     private var listener: OnConnectedInteractionListener? = null
+
+    var rs: RemoteStorage? = null
 
     private class Constants {
         companion object {
@@ -58,7 +61,31 @@ class ConnectedFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val pushButton = view.findViewById<Button>(R.id.button_push)
+        pushButton.setOnClickListener {
+            val value = Clipboard.getContent(context!!)
+            if (value != null) {
+                rs?.put("/clipboard/txt", value,
+                    {
+                        Log.e(MainActivity.id, it)
+                    },
+                    {
+                        Log.i(MainActivity.id, it)
+                    }
+                )
+            }
+        }
+
         val pullButton = view.findViewById<Button>(R.id.button_pull)
+        pullButton.setOnClickListener {
+            rs?.get("/clipboard/txt",
+                {
+                    Log.e(MainActivity.id, it)
+                },
+                {
+                    Clipboard.setContent(context!!, it)
+                }
+            )
+        }
 
     }
 
@@ -79,6 +106,8 @@ class ConnectedFragment : Fragment() {
      * for more information.
      */
     interface OnConnectedInteractionListener {
+        fun onPushClick()
+        fun onPullClick()
     }
 
     companion object {

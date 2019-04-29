@@ -18,6 +18,9 @@ class MainActivity : AppCompatActivity(),
         val id = "MainActivity"
     }
 
+    var href: Uri? = null
+    var token: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -29,8 +32,11 @@ class MainActivity : AppCompatActivity(),
         connectButton.setOnClickListener {
             Discovery.lookup(
                 inputText.text.toString(),
-                { e -> Log.e(id, e) },
+                {
+                    e -> Log.e(id, e)
+                },
                 { jrd ->
+                    this.href = Authorization.getHref(jrd)
                     val authFragment = AuthorizeFragment.newInstance(Authorization.getAuthQuery(jrd).toString())
                     val transaction = supportFragmentManager.beginTransaction()
                     transaction.replace(R.id.frame, authFragment)
@@ -42,14 +48,27 @@ class MainActivity : AppCompatActivity(),
 
     override fun onAuthorization(token: String) {
         Log.i(id, token)
+
         val prefs = getPreferences(Context.MODE_PRIVATE).edit()
         prefs.putString("token", token)
         prefs.apply()
+
         val connectedFragment = ConnectedFragment.newInstance(token)
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame, connectedFragment)
         transaction.commit()
+
+        this.token = token
+        connectedFragment.rs = RemoteStorage(href!!, this.token!!)
         //TODO: change connect to disconnect
+    }
+
+    override fun onPushClick() {
+
+    }
+
+    override fun onPullClick() {
+
     }
 
 }
