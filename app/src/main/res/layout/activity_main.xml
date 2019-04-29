@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
     <Button
-            android:text="Lookup"
+            android:text="Connect"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/buttonLookup" android:layout_marginTop="8dp"
@@ -25,22 +25,13 @@
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"/>
-    <EditText
+    <FrameLayout
             android:layout_width="0dp"
-            android:layout_height="136dp"
-            android:inputType="textMultiLine"
-            android:gravity="start|top"
-            android:ems="10"
-            android:id="@+id/textViewResult" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/buttonLookup" android:layout_marginStart="16dp"
-            app:layout_constraintStart_toStartOf="parent" android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"
-            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/webView"/>
-    <WebView
-            android:layout_width="0dp"
-            android:layout_height="436dp"
-            android:id="@+id/webView" android:layout_marginBottom="16dp"
+            android:layout_height="0dp" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/buttonLookup" android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="16dp"/>
+            android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"
+            app:layout_constraintVertical_bias="0.501" android:id="@+id/frame">
+
+    </FrameLayout>
 </android.support.constraint.ConstraintLayout>

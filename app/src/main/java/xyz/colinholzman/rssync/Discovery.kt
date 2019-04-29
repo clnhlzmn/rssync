@@ -2,15 +2,18 @@ package xyz.colinholzman.rssync
 
 import android.net.Uri
 import android.webkit.URLUtil
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import okhttp3.*
 import java.io.IOException
 
 class Discovery {
 
     companion object {
+        var gson = Gson()
         val client = OkHttpClient()
 
-        fun lookup(userAddress: String, onFailure: (IOException) -> Unit, onSuccess: (Response) -> Unit) {
+        fun lookup(userAddress: String, onFailure: (IOException) -> Unit, onSuccess: (JSONResourceDescriptor) -> Unit) {
             val userAddressUri = Uri.parse(URLUtil.guessUrl(userAddress))
             val webfingerQueryUri = Uri.Builder()
             webfingerQueryUri.scheme("https")
@@ -28,7 +31,16 @@ class Discovery {
                         onFailure(e)
                     }
                     override fun onResponse(call: Call, response: Response) {
-                        onSuccess(response)
+                        if (response.code() == 200) {
+                            val result =
+                                gson.fromJson<JSONResourceDescriptor>(
+                                    response.body()?.string(),
+                                    object: TypeToken<JSONResourceDescriptor>(){}.type
+                                )
+                            onSuccess(result)
+                        } else {
+                            onFailure(IOException(response.code().toString()))
+                        }
                     }
                 }
             )
