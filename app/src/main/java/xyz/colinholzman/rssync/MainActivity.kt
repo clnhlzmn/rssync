@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.widget.Button
 import android.widget.EditText
 import android.util.Log
@@ -23,11 +24,11 @@ class MainActivity : AppCompatActivity(),
     var token: String? = null
 
     private fun initState() {
-        val prefs = getPreferences(Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences("rssync", Context.MODE_PRIVATE)
         this.token = prefs.getString("token", null)
         val hrefStr = prefs.getString("href", null)
 
-        if (token == null && hrefStr != null) {
+        if (token != null && hrefStr != null) {
             href = Uri.parse(hrefStr)
             setStateConnected()
         } else {
@@ -42,7 +43,7 @@ class MainActivity : AppCompatActivity(),
         href = null
         token = null
 
-        val prefs = getPreferences(Context.MODE_PRIVATE).edit()
+        val prefs = getSharedPreferences("rssync", Context.MODE_PRIVATE).edit()
         prefs.remove("token")
         prefs.remove("href")
         prefs.apply()
@@ -74,7 +75,7 @@ class MainActivity : AppCompatActivity(),
 
     private fun setStateConnected() {
 
-        val prefs = getPreferences(Context.MODE_PRIVATE).edit()
+        val prefs = getSharedPreferences("rssync", Context.MODE_PRIVATE).edit()
         prefs.putString("token", token)
         prefs.putString("href", href.toString())
         prefs.apply()
