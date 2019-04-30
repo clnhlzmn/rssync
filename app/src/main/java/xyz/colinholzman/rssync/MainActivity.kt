@@ -1,7 +1,6 @@
 package xyz.colinholzman.rssync
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -18,49 +17,92 @@ class MainActivity : AppCompatActivity(),
         val id = "MainActivity"
     }
 
+    var actionButton: Button? = null
+
     var href: Uri? = null
     var token: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+    private fun initState() {
+        val prefs = getPreferences(Context.MODE_PRIVATE)
+        this.token = prefs.getString("token", null)
+        val hrefStr = prefs.getString("href", null)
+
+        if (token == null && hrefStr != null) {
+            href = Uri.parse(hrefStr)
+            setStateConnected()
+        } else {
+            setStateDisconnected()
+        }
+    }
+
+    private fun setStateDisconnected() {
 
         val inputText = findViewById<EditText>(R.id.editTextInput)
-        val connectButton = findViewById<Button>(R.id.buttonLookup)
 
-        //TODO: determine connection status and set fragment accordingly
-        connectButton.setOnClickListener {
+        href = null
+        token = null
+
+        val prefs = getPreferences(Context.MODE_PRIVATE).edit()
+        prefs.remove("token")
+        prefs.remove("href")
+        prefs.apply()
+
+        actionButton!!.text = "Connect"
+        actionButton!!.setOnClickListener {
             Discovery.lookup(
                 inputText.text.toString(),
                 {
                     e -> Log.e(id, e)
                 },
                 { jrd ->
-                    this.href = Authorization.getHref(jrd)
-                    val authFragment = AuthorizeFragment.newInstance(Authorization.getAuthQuery(jrd).toString())
+                    href = Authorization.getHref(jrd)
+                    val authFragment =
+                        AuthorizeFragment.newInstance(Authorization.getAuthQuery(jrd).toString())
                     val transaction = supportFragmentManager.beginTransaction()
                     transaction.replace(R.id.frame, authFragment)
                     transaction.commit()
                 }
             )
         }
+
+        val blankFragment = BlankFragment.newInstance()
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.frame, blankFragment)
+        transaction.commit()
+
     }
 
-    override fun onAuthorization(token: String) {
-        Log.i(id, token)
+    private fun setStateConnected() {
 
         val prefs = getPreferences(Context.MODE_PRIVATE).edit()
         prefs.putString("token", token)
+        prefs.putString("href", href.toString())
         prefs.apply()
 
-        val connectedFragment = ConnectedFragment.newInstance(token)
+        actionButton!!.text = "Disconnect"
+        actionButton!!.setOnClickListener {
+            setStateDisconnected()
+        }
+
+        val connectedFragment = ConnectedFragment.newInstance(token!!)
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame, connectedFragment)
         transaction.commit()
-
-        this.token = token
         connectedFragment.rs = RemoteStorage(href!!, this.token!!)
-        //TODO: change connect to disconnect
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        actionButton = findViewById(R.id.buttonLookup)
+
+        initState()
+    }
+
+    override fun onAuthorization(token: String) {
+        this.token = token
+        setStateConnected()
     }
 
     override fun onPushClick() {
