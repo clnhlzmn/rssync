@@ -2,6 +2,7 @@ package xyz.colinholzman.rssync
 
 import android.net.Uri
 import android.webkit.URLUtil
+import xyz.colinholzman.remotestorage_kotlin.JSONResourceDescriptor
 
 class Authorization {
     companion object {

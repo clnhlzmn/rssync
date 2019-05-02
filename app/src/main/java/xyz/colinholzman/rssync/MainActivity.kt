@@ -1,13 +1,13 @@
 package xyz.colinholzman.rssync
 
 import android.content.Context
-import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.widget.Button
 import android.widget.EditText
 import android.util.Log
+import xyz.colinholzman.remotestorage_kotlin.Discovery
 import xyz.colinholzman.remotestorage_kotlin.RemoteStorage
 
 
