@@ -10,8 +10,8 @@ class Authorization {
         val redirectUrl = Uri.parse(URLUtil.guessUrl("https://rssync.colinholzman.xyz"))
         val scope = "clipboard:rw"
 
-        fun getHref(jrd: JSONResourceDescriptor): Uri {
-            return Uri.parse(jrd.links!![0].href)
+        fun getHref(jrd: JSONResourceDescriptor): String? {
+            return jrd.links!![0].href
         }
 
         fun getAuthQuery(jrd: JSONResourceDescriptor): Uri {

@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import xyz.colinholzman.remotestorage_kotlin.RemoteStorage
 
 /**
  * A simple [Fragment] subclass.

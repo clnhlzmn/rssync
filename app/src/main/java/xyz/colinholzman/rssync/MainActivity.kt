@@ -8,6 +8,7 @@ import android.preference.PreferenceManager
 import android.widget.Button
 import android.widget.EditText
 import android.util.Log
+import xyz.colinholzman.remotestorage_kotlin.RemoteStorage
 
 
 class MainActivity : AppCompatActivity(),
@@ -20,16 +21,15 @@ class MainActivity : AppCompatActivity(),
 
     var actionButton: Button? = null
 
-    var href: Uri? = null
+    var href: String? = null
     var token: String? = null
 
     private fun initState() {
         val prefs = getSharedPreferences("rssync", Context.MODE_PRIVATE)
-        this.token = prefs.getString("token", null)
-        val hrefStr = prefs.getString("href", null)
+        token = prefs.getString("token", null)
+        href = prefs.getString("href", null)
 
-        if (token != null && hrefStr != null) {
-            href = Uri.parse(hrefStr)
+        if (token != null && href != null) {
             setStateConnected()
         } else {
             setStateDisconnected()
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(),
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame, connectedFragment)
         transaction.commit()
-        connectedFragment.rs = RemoteStorage(href!!, this.token!!)
+        connectedFragment.rs = RemoteStorage(href!!, token!!)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
