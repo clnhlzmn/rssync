@@ -111,12 +111,9 @@ class MainActivity : AppCompatActivity(),
         setStateDisconnected()
     }
 
-    override fun onPushClick() {
-
-    }
-
-    override fun onPullClick() {
-
+    override fun onError(what: String) {
+        Log.i(id, what)
+        setStateDisconnected()
     }
 
 }

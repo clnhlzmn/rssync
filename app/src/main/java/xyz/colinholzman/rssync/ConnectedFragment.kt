@@ -66,12 +66,8 @@ class ConnectedFragment : Fragment() {
             val value = Clipboard.getContent(context!!)
             if (value != null) {
                 rs?.put("/clipboard/txt", value,
-                    {
-                        Log.e(MainActivity.id, it)
-                    },
-                    {
-                        Log.i(MainActivity.id, it)
-                    }
+                    { listener?.onError(it) },
+                    { }
                 )
             }
         }
@@ -79,12 +75,8 @@ class ConnectedFragment : Fragment() {
         val pullButton = view.findViewById<Button>(R.id.button_pull)
         pullButton.setOnClickListener {
             rs?.get("/clipboard/txt",
-                {
-                    Log.e(MainActivity.id, it)
-                },
-                {
-                    Clipboard.setContent(context!!, it)
-                }
+                { listener?.onError(it) },
+                { Clipboard.setContent(context!!, it) }
             )
         }
 
@@ -107,8 +99,7 @@ class ConnectedFragment : Fragment() {
      * for more information.
      */
     interface OnConnectedInteractionListener {
-        fun onPushClick()
-        fun onPullClick()
+        fun onError(what: String)
     }
 
     companion object {
