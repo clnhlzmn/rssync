@@ -101,9 +101,14 @@ class MainActivity : AppCompatActivity(),
         initState()
     }
 
-    override fun onAuthorization(token: String) {
+    override fun onAuthorizationGranted(token: String) {
         this.token = token
         setStateConnected()
+    }
+
+    override fun onAuthorizationDenied(reason: String) {
+        Log.i(id, reason)
+        setStateDisconnected()
     }
 
     override fun onPushClick() {

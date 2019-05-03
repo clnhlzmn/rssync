@@ -3,6 +3,7 @@ package xyz.colinholzman.rssync
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,14 +35,21 @@ class AuthorizeFragment : Fragment() {
         val listener: OnAuthorizationListener?
     ): WebViewClient() {
         override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+            Log.i("AuthTokenWebViewClient", request.url.toString())
             if (request.url.authority == redirectAuthority) {
                 val token = request.url.fragment?.removePrefix("access_token=")
+                val error = request.url.fragment?.removePrefix("error=")
                 if (token != null && token != request.url.fragment) {
-                    listener?.onAuthorization(token)
+                    listener?.onAuthorizationGranted(token)
+                    return true
+                } else if (error != null && error != request.url.fragment) {
+                    listener?.onAuthorizationDenied(error)
+                    return true
+                } else {
+                    listener?.onAuthorizationDenied("unknown error")
                     return true
                 }
             }
-            view.loadUrl(request.url.toString())
             return false
         }
     }
@@ -98,7 +106,8 @@ class AuthorizeFragment : Fragment() {
      * for more information.
      */
     interface OnAuthorizationListener {
-        fun onAuthorization(token: String)
+        fun onAuthorizationGranted(token: String)
+        fun onAuthorizationDenied(reason: String)
     }
 
     companion object {
