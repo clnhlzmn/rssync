@@ -7,6 +7,7 @@ import android.preference.PreferenceManager
 import android.widget.Button
 import android.widget.EditText
 import android.util.Log
+import xyz.colinholzman.remotestorage_kotlin.Authorization
 import xyz.colinholzman.remotestorage_kotlin.Discovery
 import xyz.colinholzman.remotestorage_kotlin.RemoteStorage
 
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity(),
                 { jrd ->
                     href = Authorization.getHref(jrd)
                     val authFragment =
-                        AuthorizeFragment.newInstance(Authorization.getAuthQuery(jrd).toString())
+                        AuthorizeFragment.newInstance(Authorization.getAuthQuery(jrd))
                     val transaction = supportFragmentManager.beginTransaction()
                     transaction.replace(R.id.frame, authFragment)
                     transaction.commit()
