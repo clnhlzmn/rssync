@@ -23,6 +23,13 @@ class MainActivity : AppCompatActivity() {
 
     var rssync: RsSync? = null
 
+    override fun onResume() {
+        super.onResume()
+        val prefs = getSharedPreferences("rssync", Context.MODE_PRIVATE)
+        val rsTokenField = findViewById<TextView>(R.id.textViewRsToken)
+        rsTokenField.text = prefs.getString("token", "***")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         rsUserField.setText(prefs.getString("user", "user@example.com"))
 
         val rsTokenField = findViewById<TextView>(R.id.textViewRsToken)
-        rsTokenField.setText(prefs.getString("token", "***"))
+        rsTokenField.text = prefs.getString("token", "***")
 
         val mqttServerField = findViewById<EditText>(R.id.editTextMqttServer)
         mqttServerField.setText(prefs.getString("mqtt_server", "example.com"))

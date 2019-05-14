@@ -25,7 +25,7 @@ class MQTT(val context: Context, val server: String, val port: String, val user:
                 object: MqttCallbackExtended {
                     override fun connectComplete(reconnect: Boolean, serverURI: String?) {
                         connected = true
-                        client.subscribe("rssync/#", 2) { topic, message ->
+                        client.subscribe("rssync/#", 0) { topic, message ->
                             if (!topic.endsWith(clientId!!)) {
                                 notify()
                             }

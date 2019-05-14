@@ -3,6 +3,7 @@ package xyz.colinholzman.rssync
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.AsyncTask
 import android.util.Log
 import xyz.colinholzman.remotestorage_kotlin.RemoteStorage
 
@@ -40,19 +41,23 @@ class RsSync(val context: Context) {
         val pass = prefs.getString("mqtt_password", null)
         if (server != null && port != null && user != null && pass != null) {
             mqtt = MQTT(context, server, port, user, pass) {
-                val content = getServerContent()
-                Log.i("RsSync", "remote changed: $content")
-                clipboard.primaryClip?.addItem(ClipData.Item(content))
+                AsyncTask.execute {
+                    val content = getServerContent()
+                    Log.i("RsSync", "remote changed: $content")
+                    clipboard.primaryClip = ClipData.newPlainText("/clipboard/txt", content)
+                }
             }
         }
 
         mqtt.connect()
 
         clipboard.addPrimaryClipChangedListener {
-            val content = clipboard.primaryClip?.getItemAt(0)?.text.toString()
-            println("local changed: $content")
-            setServerContent(content)
-            mqtt.publish()
+            AsyncTask.execute {
+                val content = clipboard.primaryClip?.getItemAt(0)?.text.toString()
+                println("local changed: $content")
+                setServerContent(content)
+                mqtt.publish()
+            }
         }
 
     }

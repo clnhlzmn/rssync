@@ -66,6 +66,7 @@ class AuthorizeActivity : AppCompatActivity() {
                                 override fun onAuthorizationGranted(token: String) {
                                     val prefs = getSharedPreferences("rssync", Context.MODE_PRIVATE)
                                     val editor = prefs.edit()
+                                    editor.putString("href", Authorization.getHref(it))
                                     editor.putString("token", token)
                                     editor.apply()
                                     Log.i("AuthorizeActivity", "authorized: $token")
