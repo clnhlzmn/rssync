@@ -35,7 +35,6 @@ class AuthorizeActivity : AppCompatActivity() {
                 val error = request.url.fragment?.removePrefix("error=")
                 if (token != null && token != request.url.fragment) {
                     listener?.onAuthorizationGranted(token)
-
                     return true
                 } else if (error != null && error != request.url.fragment) {
                     listener?.onAuthorizationDenied(error)
