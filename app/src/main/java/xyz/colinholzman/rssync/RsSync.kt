@@ -39,19 +39,8 @@ class RsSync(val context: Context) {
         val port = prefs.getString("mqtt_port", null)
         val user = prefs.getString("mqtt_user", null)
         val pass = prefs.getString("mqtt_password", null)
-        if (server != null && port != null && user != null && pass != null) {
-            mqtt = MQTT(context, server, port, user, pass) {
-                AsyncTask.execute {
-                    val content = getServerContent()
-                    Log.i("RsSync", "remote changed: $content")
-                    clipboard.primaryClip = ClipData.newPlainText("/clipboard/txt", content)
-                }
-            }
-        }
 
-        mqtt.connect()
-
-        clipboard.addPrimaryClipChangedListener {
+        val clipChangedListener = ClipboardManager.OnPrimaryClipChangedListener {
             AsyncTask.execute {
                 val content = clipboard.primaryClip?.getItemAt(0)?.text.toString()
                 println("local changed: $content")
@@ -59,6 +48,21 @@ class RsSync(val context: Context) {
                 mqtt.publish()
             }
         }
+        if (server != null && port != null && user != null && pass != null) {
+            mqtt = MQTT(context, server, port, user, pass) {
+                AsyncTask.execute {
+                    val content = getServerContent()
+                    Log.i("RsSync", "remote changed: $content")
+                    clipboard.removePrimaryClipChangedListener(clipChangedListener)
+                    clipboard.primaryClip = ClipData.newPlainText("/clipboard/txt", content)
+                    clipboard.addPrimaryClipChangedListener(clipChangedListener)
+                }
+            }
+        }
+
+        mqtt.connect()
+
+        clipboard.addPrimaryClipChangedListener(clipChangedListener)
 
     }
 
