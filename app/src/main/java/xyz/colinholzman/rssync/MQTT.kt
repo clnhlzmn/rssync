@@ -1,7 +1,7 @@
 package xyz.colinholzman.rssync
 
 import android.content.Context
-import android.util.Log
+import android.os.AsyncTask
 import org.eclipse.paho.client.mqttv3.*
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 
@@ -28,25 +28,28 @@ class MQTT(val context: Context, val server: String, val port: String, val user:
                                     notify()
                                 }
                             }
-                            Log.i("MQTT", "connected")
+                            Log.println("[MQTT]: connected to $broker")
                         }
 
                         override fun messageArrived(topic: String?, message: MqttMessage?) {
-                            Log.i("MQTT", "messageArrived")
+                            Log.println("[MQTT]: messageArrived")
                         }
 
                         override fun connectionLost(cause: Throwable?) {
-                            Log.i("MQTT", "connectionLost")
+                            Log.println("[MQTT]: connectionLost")
+                            Log.println("[MQTT]: connecting to $broker")
+                            client.connect()
                         }
 
                         override fun deliveryComplete(token: IMqttDeliveryToken?) {
-                            Log.i("MQTT", "deliveryComplete")
+                            Log.println("[MQTT]: deliveryComplete")
                         }
                     }
                 )
+                Log.println("[MQTT]: connecting to $broker")
                 client.connect(connOpts)
             } catch (e: MqttException) {
-                Log.e("MQTT", e.toString())
+                Log.println("[MQTT]: $e")
             }
         }
     }
@@ -55,7 +58,7 @@ class MQTT(val context: Context, val server: String, val port: String, val user:
         try {
             client.publish("rssync/$clientId", MqttMessage())
         } catch (e: MqttException) {
-            Log.e("MQTT", e.toString())
+            Log.println("[MQTT]: $e")
         }
     }
 
@@ -63,7 +66,7 @@ class MQTT(val context: Context, val server: String, val port: String, val user:
         try {
             client.disconnect()
         } catch (e: MqttException) {
-            Log.e("MQTT", e.toString())
+            Log.println("[MQTT]: $e")
         }
     }
 
