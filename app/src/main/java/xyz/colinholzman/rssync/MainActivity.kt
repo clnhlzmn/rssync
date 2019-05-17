@@ -1,9 +1,14 @@
 package xyz.colinholzman.rssync
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
+import android.support.annotation.RequiresApi
 import android.text.Editable
 import android.widget.Button
 import android.widget.EditText
@@ -22,8 +27,6 @@ class MainActivity : AppCompatActivity() {
         val id = "MainActivity"
     }
 
-    var rssync: RsSync? = null
-
     private fun updatePrefs(key: String, value: String) {
         val editor = getSharedPreferences("rssync", Context.MODE_PRIVATE).edit()
         editor.putString(key, value)
@@ -37,9 +40,17 @@ class MainActivity : AppCompatActivity() {
         rsTokenField.text = prefs.getString("token", "***")
     }
 
+    @SuppressLint("BatteryLife")
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val intent =
+            Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                .setData(Uri.parse("package:" + packageName))
+
+        startActivity(intent)
 
         val prefs = getSharedPreferences("rssync", Context.MODE_PRIVATE)
         if (!prefs.contains("client_id")) {
@@ -96,8 +107,9 @@ class MainActivity : AppCompatActivity() {
             log.setText(Log.log.takeLast(lines).reduce { acc, s -> "$acc\n$s" },  TextView.BufferType.EDITABLE)
         }
 
-        rssync = RsSync(this)
-        rssync?.start()
+        val fgServiceIntent = Intent(this@MainActivity, ForegroundService::class.java)
+        fgServiceIntent.action = ForegroundService.ACTION_START_FOREGROUND_SERVICE
+        startService(fgServiceIntent)
     }
 
 }

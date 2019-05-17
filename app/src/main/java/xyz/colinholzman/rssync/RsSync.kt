@@ -66,6 +66,10 @@ class RsSync(val context: Context) {
 
     }
 
+    fun publish() {
+        mqtt.publish()
+    }
+
     fun stop() {
 
     }
