@@ -23,7 +23,7 @@ import kotlin.math.min
 
 class MainActivity : AppCompatActivity() {
 
-    var rssync: RsSync? = null
+//    var rssync: RsSync? = null
 
     companion object {
         val id = "MainActivity"
@@ -109,12 +109,12 @@ class MainActivity : AppCompatActivity() {
             log.setText(Log.log.takeLast(lines).reduce { acc, s -> "$acc\n$s" },  TextView.BufferType.EDITABLE)
         }
 
-//        val fgServiceIntent = Intent(this@MainActivity, ForegroundService::class.java)
-//        fgServiceIntent.action = ForegroundService.ACTION_START_FOREGROUND_SERVICE
-//        startService(fgServiceIntent)
+        val fgServiceIntent = Intent(this@MainActivity, ForegroundService::class.java)
+        fgServiceIntent.action = ForegroundService.ACTION_START_FOREGROUND_SERVICE
+        startService(fgServiceIntent)
 
-        rssync = RsSync(this)
-        rssync?.start()
+//        rssync = RsSync(this)
+//        rssync?.start()
 
     }
 

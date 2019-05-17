@@ -20,7 +20,7 @@ class MQTT(val context: Context, val server: String, val port: String, val user:
                 connOpts.isCleanSession = true
                 connOpts.userName = user
                 connOpts.password = password?.toCharArray()
-                connOpts.keepAliveInterval = 10 * 60
+//                connOpts.keepAliveInterval = 10 * 60
 
                 client.setCallback(
                     object : MqttCallbackExtended {
