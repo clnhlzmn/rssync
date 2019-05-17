@@ -44,13 +44,13 @@ class ForegroundService : Service() {
                     rssync = RsSync(this)
                     rssync?.start()
 
-                    var runnable: Runnable? = null
-                    runnable = Runnable {
-                        rssync?.publish()
-                        Thread.sleep(1000)
-                        AsyncTask.execute(runnable!!)
-                    }
-                    AsyncTask.execute(runnable)
+//                    var runnable: Runnable? = null
+//                    runnable = Runnable {
+//                        rssync?.publish()
+//                        Thread.sleep(1000)
+//                        AsyncTask.execute(runnable!!)
+//                    }
+//                    AsyncTask.execute(runnable)
 
                 }
                 ACTION_STOP_FOREGROUND_SERVICE -> {

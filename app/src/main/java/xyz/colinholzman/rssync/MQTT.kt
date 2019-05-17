@@ -2,6 +2,7 @@ package xyz.colinholzman.rssync
 
 import android.content.Context
 import android.os.AsyncTask
+import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 
@@ -10,7 +11,7 @@ class MQTT(val context: Context, val server: String, val port: String, val user:
 //    private val broker = "tcp://$user:$password@$server:$port"
     private val broker = "tcp://$server:$port"
     private val clientId = context.getSharedPreferences("rssync", Context.MODE_PRIVATE).getString("client_id", null)
-    private val client = MqttClient(broker, clientId, MemoryPersistence())
+    private val client = MqttAndroidClient(context, broker, clientId)
 
     fun connect() {
         if (!client.isConnected) {
@@ -19,6 +20,7 @@ class MQTT(val context: Context, val server: String, val port: String, val user:
                 connOpts.isCleanSession = true
                 connOpts.userName = user
                 connOpts.password = password?.toCharArray()
+                connOpts.keepAliveInterval = 10 * 60
 
                 client.setCallback(
                     object : MqttCallbackExtended {
@@ -55,10 +57,12 @@ class MQTT(val context: Context, val server: String, val port: String, val user:
     }
 
     fun publish() {
-        try {
-            client.publish("rssync/$clientId", MqttMessage())
-        } catch (e: MqttException) {
-            Log.println("[MQTT]: $e")
+        if (client.isConnected) {
+            try {
+                client.publish("rssync/$clientId", MqttMessage())
+            } catch (e: MqttException) {
+                Log.println("[MQTT]: $e")
+            }
         }
     }
 

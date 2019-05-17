@@ -5,11 +5,10 @@ import kotlin.collections.ArrayList
 
 class Log {
     companion object {
-        val calendar = Calendar.getInstance()
         val log = ArrayList<String>()
         val listeners = ArrayList<(String)->Unit>()
         fun println(value: String) {
-            log.add("${calendar.time}: $value")
+            log.add("${Calendar.getInstance().time}: $value")
             listeners.forEach { it.invoke(value) }
         }
     }
