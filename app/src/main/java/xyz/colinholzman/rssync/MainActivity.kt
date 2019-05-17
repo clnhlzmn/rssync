@@ -48,11 +48,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val intent =
-            Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                .setData(Uri.parse("package:" + packageName))
-
-        startActivity(intent)
+//        val intent =
+//            Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+//                .setData(Uri.parse("package:" + packageName))
+//
+//        startActivity(intent)
 
         val prefs = getSharedPreferences("rssync", Context.MODE_PRIVATE)
         if (!prefs.contains("client_id")) {
@@ -70,29 +70,29 @@ class MainActivity : AppCompatActivity() {
         val rsTokenField = findViewById<TextView>(R.id.textViewRsToken)
         rsTokenField.text = prefs.getString("token", "***")
 
-        val mqttServerField = findViewById<EditText>(R.id.editTextMqttServer)
-        mqttServerField.setText(prefs.getString("mqtt_server", "example.com"))
-        mqttServerField.addTextChangedListener(AfterTextChangedListener{
-            updatePrefs("mqtt_server", it)
-        })
-
-        val mqttPortField = findViewById<EditText>(R.id.editTextMqttPort)
-        mqttPortField.setText(prefs.getString("mqtt_port", "12345"))
-        mqttPortField.addTextChangedListener(AfterTextChangedListener{
-            updatePrefs("mqtt_port", it)
-        })
-
-        val mqttUserField = findViewById<EditText>(R.id.editTextMqttUser)
-        mqttUserField.setText(prefs.getString("mqtt_user", "user"))
-        mqttUserField.addTextChangedListener(AfterTextChangedListener{
-            updatePrefs("mqtt_user", it)
-        })
-
-        val mqttPasswordField = findViewById<EditText>(R.id.editTextMqttPassword)
-        mqttPasswordField.setText(prefs.getString("mqtt_password", "password"))
-        mqttPasswordField.addTextChangedListener(AfterTextChangedListener{
-            updatePrefs("mqtt_password", it)
-        })
+//        val mqttServerField = findViewById<EditText>(R.id.editTextMqttServer)
+//        mqttServerField.setText(prefs.getString("mqtt_server", "example.com"))
+//        mqttServerField.addTextChangedListener(AfterTextChangedListener{
+//            updatePrefs("mqtt_server", it)
+//        })
+//
+//        val mqttPortField = findViewById<EditText>(R.id.editTextMqttPort)
+//        mqttPortField.setText(prefs.getString("mqtt_port", "12345"))
+//        mqttPortField.addTextChangedListener(AfterTextChangedListener{
+//            updatePrefs("mqtt_port", it)
+//        })
+//
+//        val mqttUserField = findViewById<EditText>(R.id.editTextMqttUser)
+//        mqttUserField.setText(prefs.getString("mqtt_user", "user"))
+//        mqttUserField.addTextChangedListener(AfterTextChangedListener{
+//            updatePrefs("mqtt_user", it)
+//        })
+//
+//        val mqttPasswordField = findViewById<EditText>(R.id.editTextMqttPassword)
+//        mqttPasswordField.setText(prefs.getString("mqtt_password", "password"))
+//        mqttPasswordField.addTextChangedListener(AfterTextChangedListener{
+//            updatePrefs("mqtt_password", it)
+//        })
 
         val authorizeButton = findViewById<Button>(R.id.buttonAuthorize)
         authorizeButton?.setOnClickListener {
