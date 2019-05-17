@@ -10,7 +10,7 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import android.widget.Toast
 import android.app.PendingIntent
-
+import android.os.AsyncTask
 
 
 class ForegroundService : Service() {
@@ -30,24 +30,25 @@ class ForegroundService : Service() {
     override fun onCreate() {
         super.onCreate()
         android.util.Log.d("ForegroundService", "My foreground service onCreate().")
+        rssync = RsSync(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) {
             when (intent.action) {
                 ACTION_START_FOREGROUND_SERVICE -> {
-                    startForegroundService()
                     Toast.makeText(applicationContext, "Foreground service is started.", Toast.LENGTH_LONG).show()
-                    rssync = RsSync(this)
+                    startForegroundService()
                     rssync?.start()
                 }
                 ACTION_STOP_FOREGROUND_SERVICE -> {
-                    stopForegroundService()
                     Toast.makeText(applicationContext, "Foreground service is stopped.", Toast.LENGTH_LONG).show()
+                    stopForegroundService()
+                    rssync?.stop()
                 }
                 ACTION_PULL -> {
-                    rssync?.pull()
                     Toast.makeText(applicationContext, "pulled from server", Toast.LENGTH_LONG).show()
+                    rssync?.pull()
                 }
             }
         }
@@ -60,8 +61,12 @@ class ForegroundService : Service() {
         // Create notification builder.
         val builder = NotificationCompat.Builder(this, createNotificationChannel("RsSync", "RsSync"))
 
+        //set small icon
+        builder.setSmallIcon(R.mipmap.ic_launcher)
+
         //set title
         builder.setContentTitle("RsSync")
+        builder.setContentText("click to pull")
 
         builder.setWhen(System.currentTimeMillis())
         // Make the notification max priority.
@@ -71,6 +76,7 @@ class ForegroundService : Service() {
         val pullIntent = Intent(this, ForegroundService::class.java)
         pullIntent.action = ACTION_PULL
         val pendingPullIntent = PendingIntent.getService(this, 0, pullIntent, 0)
+
         builder.setContentIntent(pendingPullIntent)
 
         // Build the notification.
@@ -90,7 +96,7 @@ class ForegroundService : Service() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(channelId: String, channelName: String): String{
-        val chan = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_NONE)
+        val chan = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
         chan.lightColor = Color.BLUE
         chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
         val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
