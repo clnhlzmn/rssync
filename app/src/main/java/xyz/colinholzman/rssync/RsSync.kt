@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.AsyncTask
+import android.util.Log
 import xyz.colinholzman.remotestorage_kotlin.RemoteStorage
 
 class RsSync(val context: Context) {
@@ -41,7 +42,7 @@ class RsSync(val context: Context) {
             clipChangedListener = ClipboardManager.OnPrimaryClipChangedListener {
                 AsyncTask.execute {
                     val content = clipboard.primaryClip?.getItemAt(0)?.text.toString()
-                    Log.println("[RsSync]: local changed: $content")
+                    Log.i("RsSync", "local changed: $content")
                     setServerContent(content)
                 }
             }
@@ -57,7 +58,7 @@ class RsSync(val context: Context) {
         if (started) {
             AsyncTask.execute {
                 val content = getServerContent()
-                Log.println("[RsSync] remote changed: $content")
+                Log.i("RsSync", "pulled: $content")
                 clipboard.removePrimaryClipChangedListener(clipChangedListener)
                 clipboard.primaryClip = ClipData.newPlainText("/clipboard/txt", content)
                 clipboard.addPrimaryClipChangedListener(clipChangedListener)

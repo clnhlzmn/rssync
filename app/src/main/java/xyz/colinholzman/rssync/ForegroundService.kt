@@ -11,6 +11,7 @@ import android.support.v4.app.NotificationCompat
 import android.widget.Toast
 import android.app.PendingIntent
 import android.os.AsyncTask
+import android.util.Log
 
 
 class ForegroundService : Service() {
@@ -29,7 +30,7 @@ class ForegroundService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        android.util.Log.d("ForegroundService", "My foreground service onCreate().")
+        Log.d("ForegroundService", "My foreground service onCreate().")
         rssync = RsSync(this)
     }
 
@@ -47,7 +48,7 @@ class ForegroundService : Service() {
                     rssync?.stop()
                 }
                 ACTION_PULL -> {
-                    Toast.makeText(applicationContext, "pulled from server", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, "pull from storage", Toast.LENGTH_LONG).show()
                     rssync?.pull()
                 }
             }
@@ -56,7 +57,7 @@ class ForegroundService : Service() {
     }
 
     private fun startForegroundService() {
-        android.util.Log.d("ForegroundService", "Start foreground service.")
+        Log.d("ForegroundService", "Start foreground service.")
 
         // Create notification builder.
         val builder = NotificationCompat.Builder(this, createNotificationChannel("RsSync", "RsSync"))
@@ -87,7 +88,7 @@ class ForegroundService : Service() {
     }
 
     private fun stopForegroundService() {
-        android.util.Log.d("ForegroundService", "Stop foreground service.")
+        Log.d("ForegroundService", "Stop foreground service.")
         // Stop foreground service and remove the notification.
         stopForeground(true)
         // Stop the foreground service.

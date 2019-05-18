@@ -50,11 +50,6 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(ssr, lockFilter)
 
         val prefs = getSharedPreferences("rssync", Context.MODE_PRIVATE)
-        if (!prefs.contains("client_id")) {
-            val editor = prefs.edit()
-            editor.putString("client_id", UUID.randomUUID().toString())
-            editor.apply()
-        }
 
         val rsUserField = findViewById<EditText>(R.id.editTextRsUser)
         rsUserField.setText(prefs.getString("user", "user@example.com"))
@@ -71,15 +66,6 @@ class MainActivity : AppCompatActivity() {
                 putExtra(AuthorizeActivity.USER, rsUserField.text.toString())
             }
             startActivity(intent)
-        }
-
-        val log = findViewById<EditText>(R.id.editTextLog)
-
-        Log.listeners.add {
-            runOnUiThread {
-                val lines = min(Log.log.size, 10)
-                log.setText(Log.log.takeLast(lines).reduce { acc, s -> "$acc\n$s" },  TextView.BufferType.EDITABLE)
-            }
         }
 
         //start foreground
