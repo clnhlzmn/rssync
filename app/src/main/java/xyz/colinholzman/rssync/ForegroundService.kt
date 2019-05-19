@@ -10,7 +10,6 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import android.widget.Toast
 import android.app.PendingIntent
-import android.os.AsyncTask
 import android.util.Log
 
 
@@ -21,7 +20,7 @@ class ForegroundService : Service() {
     companion object {
         const val ACTION_START_FOREGROUND_SERVICE = "ACTION_START_FOREGROUND_SERVICE"
         const val ACTION_STOP_FOREGROUND_SERVICE = "ACTION_STOP_FOREGROUND_SERVICE"
-        const val ACTION_PULL = "ACTION_PULL"
+//        const val ACTION_PULL = "ACTION_PULL"
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -47,10 +46,10 @@ class ForegroundService : Service() {
                     stopForegroundService()
                     rssync?.stop()
                 }
-                ACTION_PULL -> {
-                    Toast.makeText(applicationContext, "pull from storage", Toast.LENGTH_LONG).show()
-                    rssync?.pull()
-                }
+//                ACTION_PULL -> {
+//                    Toast.makeText(applicationContext, "pull from storage", Toast.LENGTH_LONG).show()
+//                    rssync?.pull()
+//                }
             }
         }
         return super.onStartCommand(intent, flags, startId)
@@ -67,18 +66,19 @@ class ForegroundService : Service() {
 
         //set title
         builder.setContentTitle("RsSync")
-        builder.setContentText("click to pull")
 
         builder.setWhen(System.currentTimeMillis())
-        // Make the notification max priority.
-        builder.priority = NotificationManager.IMPORTANCE_HIGH
 
         //Create intent to pull from storage
-        val pullIntent = Intent(this, ForegroundService::class.java)
-        pullIntent.action = ACTION_PULL
-        val pendingPullIntent = PendingIntent.getService(this, 0, pullIntent, 0)
+        val stopIntent = Intent(this, ForegroundService::class.java)
+        stopIntent.action = ACTION_STOP_FOREGROUND_SERVICE
+        val pendingStopIntent = PendingIntent.getService(this, 0, stopIntent, 0)
+        val stopAction = NotificationCompat.Action.Builder(R.mipmap.ic_launcher, "stop", pendingStopIntent).build()
+        builder.addAction(stopAction)
 
-        builder.setContentIntent(pendingPullIntent)
+        val settingsIntent = Intent(this, MainActivity::class.java)
+        val pendingSettingsIntent = PendingIntent.getActivity(this, 0, settingsIntent, 0)
+        builder.setContentIntent(pendingSettingsIntent)
 
         // Build the notification.
         val notification = builder.build()
